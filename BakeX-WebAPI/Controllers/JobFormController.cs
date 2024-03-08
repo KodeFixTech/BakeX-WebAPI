@@ -1,5 +1,6 @@
 ﻿using BakeX_WebAPI.DAL;
 using BakeX_WebAPI.Models;
+using BakeX_WebAPI.Repositories.Interface;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -14,11 +15,14 @@ namespace BakeX_WebAPI.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly SqlConnectionFactory _connectionFactory;
+        private readonly IJobFormRepository   _jobFormRepository;
+        private readonly IUserRepository _userRepository;
 
-        public JobFormController(IConfiguration configuration, SqlConnectionFactory connectionFactory)
+        public JobFormController(IJobFormRepository jobFormRepository, IUserRepository userRepository)
         {
-            _configuration = configuration;
-            _connectionFactory = connectionFactory;
+         
+            _jobFormRepository = jobFormRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -27,10 +31,7 @@ namespace BakeX_WebAPI.Controllers
         {
             try
             {
-                using SqlConnection connection = _connectionFactory.CreateConnection();
-
-                var categories =  await connection.QueryAsync<JobCategory>("select * from  JobCategory ");
-
+               var categories = await _jobFormRepository.GetJobCategory();
                 return Ok(categories);
 
             }
@@ -42,34 +43,103 @@ namespace BakeX_WebAPI.Controllers
         }
 
         [HttpPost]
-        [Route("addEmployee")]
-        public async Task<IActionResult> addEmployeeDetails(Employee employee)
+        [Route("InsertUser")]
+        public async Task<IActionResult> AddUserDetails(User user)
         {
             try
             {
-
-                using SqlConnection connection = _connectionFactory.CreateConnection();
-                await connection.OpenAsync();
-
-                string query = "INSERT INTO Employee (EmployeeName,Age,CategoryId) VALUES (@EmployeeName, @Age,@CategoryId)";
-
-                using SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@EmployeeName", employee.EmployeeName);
-                command.Parameters.AddWithValue("@Age", employee.Age);
-                command.Parameters.AddWithValue("@CategoryId", employee.CategoryId);
-             
-
-                await command.ExecuteNonQueryAsync();
-
-                return Ok("Employee added successfully.");
+               bool userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
+                return Ok(200);
             }
             catch (Exception ex) {
-
-                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while adding the employee: {ex.Message}");
-
-
+                return StatusCode(500, ex.Message);
             }
+        }
 
-         }
+
+        [HttpGet]
+        [Route("getUserByEmail")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserFromEmail(email);
+                if (user != null)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    return NotFound("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching user details: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("getDistrict")]
+        public async Task<IActionResult> GetDistrict()
+        {
+            try
+            {
+                var distict = await _userRepository.GetDistricts();
+                if (distict != null)
+                {
+                    return Ok(distict);
+                }
+                else
+                {
+                    return NotFound("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching user details: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet]
+        [Route("getStates")]
+        public async Task<IActionResult> GetStates()
+        {
+            try
+            {
+                var states = await _userRepository.GetStates();
+                if (states != null)
+                {
+                    return Ok(states);
+                }
+                else
+                {
+                    return NotFound("User not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching user details: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [Route("InsertProfile")]
+        public async Task<IActionResult> AddProfileDetails(Profile profile)
+        {
+            try
+            {
+                await _userRepository.SaveUserProfile(profile);
+                return Ok(200);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }

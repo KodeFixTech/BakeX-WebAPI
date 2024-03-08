@@ -1,4 +1,6 @@
 using BakeX_WebAPI.DAL;
+using BakeX_WebAPI.Repositories;
+using BakeX_WebAPI.Repositories.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<SqlConnectionFactory>();
+builder.Services.AddScoped<IJobFormRepository,JobFormRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
 
 builder.Services.AddCors(options =>
 {
