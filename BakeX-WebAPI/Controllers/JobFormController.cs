@@ -42,19 +42,55 @@ namespace BakeX_WebAPI.Controllers
            
         }
 
-        [HttpPost]
-        [Route("InsertUser")]
-        public async Task<IActionResult> AddUserDetails(User user)
+
+        [HttpGet]
+        [Route("getEmploymentCategory")]
+        public async Task<IActionResult> getEmploymentTypes()
         {
             try
             {
-               bool userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
-                return Ok(200);
+                var categories = await _jobFormRepository.getEmploymentTypes();
+                return Ok(categories);
+
             }
-            catch (Exception ex) {
-                return StatusCode(500, ex.Message);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching categories: {ex.Message}");
             }
+
         }
+
+
+        [HttpGet]
+        [Route("getExpertiseCategory")]
+        public async Task<IActionResult> getExpertiseTypes()
+        {
+            try
+            {
+                var categories = await _jobFormRepository.getExpertiseTypes();
+                return Ok(categories);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching categories: {ex.Message}");
+            }
+
+        }
+
+        //[HttpPost]
+        //[Route("InsertUser")]
+        //public async Task<IActionResult> AddUserDetails(User user)
+        //{
+        //    try
+        //    {
+        //       bool userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
+        //        return Ok(200);
+        //    }
+        //    catch (Exception ex) {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
 
         [HttpGet]

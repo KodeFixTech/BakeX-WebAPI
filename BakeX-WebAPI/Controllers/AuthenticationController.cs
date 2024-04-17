@@ -21,7 +21,8 @@ namespace BakeX_WebAPI.Controllers
         {
             try
             {
-                string userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
+                bool userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
+
                 return Ok(userAdded);
             }
             catch (Exception ex)
@@ -29,5 +30,24 @@ namespace BakeX_WebAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpPost]
+        [Route("IsBakeUser")]
+        public async Task<IActionResult> IsBakeUser(String phoneno)
+        {
+            try
+            {
+                bool userAdded = await _userRepository.CheckBakeUser(phoneno);
+
+                return Ok(userAdded);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 }

@@ -31,6 +31,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+app.MapGet("/api/greet", () => "Hello, World!");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

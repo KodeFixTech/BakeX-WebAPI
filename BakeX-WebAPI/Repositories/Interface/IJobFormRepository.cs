@@ -7,5 +7,9 @@ namespace BakeX_WebAPI.Repositories.Interface
     {
 
         public Task<IEnumerable<JobCategory>> GetJobCategory();
+
+        public Task<IEnumerable<EmploymentInformation>> getEmploymentTypes();
+
+        public Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes();
     }
 }

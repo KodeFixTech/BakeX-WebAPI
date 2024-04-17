@@ -30,5 +30,25 @@ namespace BakeX_WebAPI.Repositories
         }
 
 
+        public async Task<IEnumerable<EmploymentInformation>> getEmploymentTypes()
+        {
+            using (SqlConnection connection = _connection.CreateConnection())
+            {
+                var categories = await connection.QueryAsync<EmploymentInformation>("SELECT * FROM EmploymentInformation");
+                return categories;
+            }
+        }
+
+
+        public  async Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes()
+        {
+            using (SqlConnection connection = _connection.CreateConnection())
+            {
+                var categories = await connection.QueryAsync<ExpertiseInformation>("select * from ExpertiseInformation");
+                return categories;
+            }
+        }
+
+
     }
 }
