@@ -10,9 +10,12 @@ namespace BakeX_WebAPI.Controllers
     public class AuthenticationController : Controller
     {
         private IUserRepository _userRepository;
+        private IBakeryOwnerRepository _ownerRepository;
 
-        public AuthenticationController(IUserRepository userRepository) {
+        public AuthenticationController(IUserRepository userRepository, IBakeryOwnerRepository ownerRepository)
+        {
             _userRepository = userRepository;
+            _ownerRepository = ownerRepository;
         }
 
         [HttpPost]
@@ -38,7 +41,7 @@ namespace BakeX_WebAPI.Controllers
         {
             try
             {
-                bool userAdded = await _userRepository.CheckBakeUser(phoneno);
+                bool userAdded = await _ownerRepository.CheckBakeUser(phoneno);
 
                 return Ok(userAdded);
             }

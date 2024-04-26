@@ -2,19 +2,27 @@
 {
     public class BakeMember
     {
-        public int MembershipId { get; set; }
-        public string MemberName { get; set; }
-        public string Phone { get; set; }
+        public int MemberId { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+        public string Age { get; set; }
+        public string Gender { get; set; }
+        public string PhoneNo { get; set; }
+        public string State { get; set; }
+        public string District { get; set; }
+        public string Place { get; set; }
+        public string Pincode { get; set; }
         public string BusinessName { get; set; }
-        public string BusinessPhone { get; set; }
         public string BusinessAddress { get; set; }
-        public string PinCode { get; set; }
-        public string FSSAILicenseNo { get; set; }
-        public int DistrictId { get; set; }
-        public int MandalamId { get; set; }
-        public string Designation { get; set; }
-        public string ProfileImage { get; set; }
-        public DateTime? MembershipExpiry { get; set; }
-        public DateTime? Age { get; set; }
+        public string FssaiNo { get; set; }
+        public string BusinessPhone { get; set; }
+        public DateTime? FssaiExpiryDate { get; set; }
+        public DateTime? ProfileCreatedDate { get; set; }
+        public string? LogoUrl { get; set; }
+
+        public string? IsBakeKeralaMember { get; set; }
     }
+
 }
