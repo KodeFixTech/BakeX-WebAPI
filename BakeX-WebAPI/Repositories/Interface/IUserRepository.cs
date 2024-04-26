@@ -15,9 +15,9 @@ namespace BakeX_WebAPI.Repositories.Interface
         public Task SaveUserProfile(Profile profile);
 
 
-        public Task<bool> CheckBakeUser(String phoneno);
+    
 
-        public Task<BakeMember> getBakeMemberDetails(string phoneno);
+       
 
     }
 }

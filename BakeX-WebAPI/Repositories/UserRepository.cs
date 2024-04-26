@@ -63,64 +63,9 @@ namespace BakeX_WebAPI.Repositories
         }
 
 
-        public async Task<bool> CheckBakeUser(String phoneno)
-        {
-            if (phoneno == null)
-            {
-                throw new ArgumentNullException();
-            }
+       
 
-            using (SqlConnection connection = _connection.CreateConnection())
-            {
-                await connection.OpenAsync();
-                int userExists = await connection.ExecuteScalarAsync<int>("CheckBakeUserByPhone", new
-                {
-                    Phone = phoneno
-                }, commandType: CommandType.StoredProcedure);
-
-                if(userExists==0)
-                {
-                    return false;
-
-                }
-                else
-                {
-                    return true;
-                }
-
-
-            }
-
-
-           
-        }
-
-
-        public async Task<BakeMember> getBakeMemberDetails(string phoneno)
-        {
-            try
-            {
-                if (phoneno == null)
-                {
-                    throw new ArgumentNullException();
-                }
-                using (SqlConnection connection = _connection.CreateConnection())
-                {
-                    await connection.OpenAsync();
-
-                    var parameters = new DynamicParameters();
-                    parameters.Add("@Phone", phoneno);
-
-                    var result = await connection.QueryFirstOrDefaultAsync<BakeMember>("GetBakeMemberByPhone", parameters, commandType: CommandType.StoredProcedure);
-                    return result;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+       
 
 
         public async Task<User> GetUserFromEmail(String email)
