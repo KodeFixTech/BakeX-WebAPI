@@ -3,6 +3,9 @@ using BakeX_WebAPI.Repositories;
 using BakeX_WebAPI.Repositories.Interface;
 using BakeX_WebAPI.Services;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +16,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Jwt configuration start
+var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
+var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+ .AddJwtBearer(options =>
+ {
+     options.TokenValidationParameters = new TokenValidationParameters
+     {
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+         ValidIssuer = jwtIssuer,
+         ValidAudience = jwtIssuer,
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+     };
+ });
+ //jwt configuration end
+
 builder.Services.AddSingleton<SqlConnectionFactory>();
-builder.Services.AddScoped<IJobFormRepository,JobFormRepository>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
-builder.Services.AddScoped<IBakeryOwnerRepository,BakeryOwnerRepository>();
+builder.Services.AddScoped<IJobFormRepository, JobFormRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBakeryOwnerRepository, BakeryOwnerRepository>();
 builder.Services.AddSingleton<ImageDecoder>();
 
 

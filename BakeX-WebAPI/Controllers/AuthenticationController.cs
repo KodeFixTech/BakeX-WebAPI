@@ -22,6 +22,7 @@ namespace BakeX_WebAPI.Controllers
         [Route("InsertUser")]
         public async Task<IActionResult> AddUserDetails(User user)
         {
+
             try
             {
                 bool userAdded = await _userRepository.AddUserDetailsFromGoogleSignIn(user);
@@ -33,6 +34,58 @@ namespace BakeX_WebAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("InsertNonGoogleUser")]
+        public async Task<IActionResult> AddNonGoogleUser(NonGoogleUser userData)
+        {
+            try
+            {
+                bool userAdded = await _userRepository.SignUpNonGoogleUser(userData);
+                return Ok(userAdded);
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        [HttpPost]
+        [Route("SignInNonGoogleUsers")]
+        public async Task<IActionResult> SignInNonGoogleUsers(NonGoogleUser userData)
+        {
+            try
+            {
+                string token = await _userRepository.SignInNonGoogleUser(userData);
+
+                if (token == "Invalid credentials")
+                {
+                    return BadRequest("Invalid credentials. Unable to sign in.");
+
+                }
+                else
+                {
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.None
+                    };
+
+                    Response.Cookies.Append("access_token", token, cookieOptions);
+
+                    return Ok("User signed in successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
 
 
         [HttpPost]

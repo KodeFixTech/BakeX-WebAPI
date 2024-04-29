@@ -8,16 +8,20 @@ namespace BakeX_WebAPI.Repositories.Interface
 
         public Task<User> GetUserFromEmail(String email);
 
-        public  Task<IEnumerable<District>> GetDistricts();
+        public Task<IEnumerable<District>> GetDistricts();
 
-        public  Task<IEnumerable<District>> GetStates();
+        public Task<IEnumerable<District>> GetStates();
 
         public Task SaveUserProfile(Profile profile);
 
+        public Task<bool> SignUpNonGoogleUser(NonGoogleUser user);
 
-    
+        Task<string> SignInNonGoogleUser(NonGoogleUser user);
 
-       
+
+
+
+
 
     }
 }
