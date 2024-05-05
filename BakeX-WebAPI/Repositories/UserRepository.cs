@@ -75,44 +75,48 @@ namespace BakeX_WebAPI.Repositories
 
         public async Task<bool> SignUpNonGoogleUser(NonGoogleUser userData)
         {
-
             try
             {
                 if (userData == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException(nameof(userData), "User data cannot be null.");
                 }
-
-
 
                 using (SqlConnection connection = _connection.CreateConnection())
                 {
                     await connection.OpenAsync();
 
-                    bool userExists = await connection.QueryFirstOrDefaultAsync<bool>("SELECT CASE WHEN EXISTS (SELECT 1 FROM NonGoogleUsers WHERE phone_number = @phoneNum) THEN 1 ELSE 0 END", new { phoneNum = userData.PhoneNum });
 
+                    var checkParameters = new DynamicParameters();
+                    checkParameters.Add("@phoneNum", userData.PhoneNum);
+                    bool userExists = await connection.QueryFirstOrDefaultAsync<bool>("CheckNonGoogleUser", checkParameters, commandType: CommandType.StoredProcedure);
 
                     if (userExists)
                     {
+
                         return false;
                     }
                     else
                     {
+
                         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userData.Password);
                         userData.Password = hashedPassword;
-                        await connection.ExecuteAsync("INSERT INTO NonGoogleUsers (phone_number, password) VALUES (@phoneNum, @password)", new { phoneNum = userData.PhoneNum, password = userData.Password });
+                        var insertParameters = new DynamicParameters();
+                        insertParameters.Add("@phoneNumber", userData.PhoneNum);
+                        insertParameters.Add("@password", userData.Password);
+
+                        await connection.ExecuteAsync("InsertNonGoogleUser", insertParameters, commandType: CommandType.StoredProcedure);
+
                         return true;
                     }
-
-
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("An error occurred during user signup.", ex);
             }
-
         }
+
 
 
         public async Task<String> SignInNonGoogleUser(NonGoogleUser userData)
@@ -129,6 +133,7 @@ namespace BakeX_WebAPI.Repositories
 
                     var user = await connection.QueryFirstOrDefaultAsync("SELECT * FROM NonGoogleUsers WHERE phone_number = @phoneNum", new { phoneNum = userData.PhoneNum });
 
+
                     bool verifyPassword;
 
                     if (user != null)
@@ -137,7 +142,7 @@ namespace BakeX_WebAPI.Repositories
                         if (verifyPassword)
                         {
                             String token = _jwtService.CreateToken();
-                            return token ;
+                            return token;
                         }
                         else
                         {
