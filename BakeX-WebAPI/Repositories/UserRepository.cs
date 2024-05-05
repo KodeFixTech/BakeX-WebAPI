@@ -30,23 +30,53 @@ namespace BakeX_WebAPI.Repositories
                     await connection.OpenAsync();
 
                     // Execute the CheckUserByEmail stored procedure to check if the user exists
-                    int userExists = await connection.ExecuteScalarAsync<int>("CheckUserByEmail", new
+
+
+                    int userExists = await connection.ExecuteScalarAsync<int>("CheckUserByMobile", new
                     {
-                        Email = user.email
+
+                        MobileNo = user.MobileNumber,
+                        AuthTypeID = user.AuthId,
+                        GoogleId= user.GoogleId,
                     }, commandType: CommandType.StoredProcedure);
 
                     if (userExists == 0)
                     {
-                        // If user doesn't exist, insert the user
-                        await connection.ExecuteAsync("InsertUser", new
+                       if (user.AuthId==1)
                         {
-                            Email = user.email,
-                            GoogleId = user.googleId,
-                            Name = user.name,
-                            ProfileImage = user.profileImage
-                        }, commandType: CommandType.StoredProcedure);
+
+                            await connection.ExecuteAsync("InsertUser", new
+                            {
+                                @MobileNumber = user.MobileNumber,
+                                @AuthTypeId = user.AuthId,
+                                @UserTypeId = user.UserTypeId,
+                                @IsMobileVerified = user.IsMobileVerified,
+                                @CreatedAt = DateTime.Now,
+                                @GoogleId = user.GoogleId,
+                            }, commandType: CommandType.StoredProcedure);
+
+                            return true;
+
+                        }
+                       else if (user.AuthId == 2)
+                        {
+
+                            await connection.ExecuteAsync("InsertUser", new
+                            {
+                                @MobileNumber = user.MobileNumber,
+                                @AuthTypeId = user.AuthId,
+                                @UserTypeId = user.UserTypeId,
+                                @IsMobileVerified = user.IsMobileVerified,
+                                @CreatedAt = DateTime.Now,
+                                @Password = user.Password,
+                            }, commandType: CommandType.StoredProcedure);
+
+                            return true;
+
+                        }
 
                         return true;
+
                     }
                     else
                     {
@@ -130,21 +160,66 @@ namespace BakeX_WebAPI.Repositories
             {
                 await connection.OpenAsync();
 
-                await connection.ExecuteAsync(
+                try
+                {
+                   var result=  await connection.QueryFirstOrDefaultAsync<int>(
                     "InsertProfile",
                     new
                     {
                         FirstName = profile.FirstName,
                         LastName = profile.LastName,
                         MobileNo = profile.MobileNo,
+                        Age = profile.Age,
                         Gender = profile.Gender,
                         State = profile.State,
-                        City = profile.City,
+                        District = profile.District,
                         Place = profile.Place,
-                        Email = profile.Email
+                        ProfileCreatedDate = profile.ProfileCreatedDate,
+                        EducationId = profile.EducationId,
+                        ExperienceId = profile.ExperienceId,
+                        Pincode = profile.Pincode
+
                     },
                     commandType: CommandType.StoredProcedure
                 );
+
+
+                    foreach (int expertiseId in profile.ExpertiseIds)
+                    {
+                        // Create parameters for expertise ID and job post ID
+                        var skillParameters = new DynamicParameters();
+                        skillParameters.Add("@ExpertiseId", expertiseId);
+                        skillParameters.Add("@ProfileId", result); // Assuming jobPost.Id is the newly inserted job post ID
+
+                        // Execute the stored procedure to insert expertise ID and job post ID into JobPostSkillSet table
+                        var rowsAffected = await connection.ExecuteAsync("InsertUserSkillSet", skillParameters, commandType: CommandType.StoredProcedure);
+
+                        // Check if the insertion was successful
+
+                    }
+
+
+                    foreach (int jobTypeId in profile.JobTypeIds)
+                    {
+                        // Create parameters for expertise ID and job post ID
+                        var skillParameters = new DynamicParameters();
+                        skillParameters.Add("@EmploymentId", jobTypeId);
+                        skillParameters.Add("@ProfileId", result); // Assuming jobPost.Id is the newly inserted job post ID
+
+                        // Execute the stored procedure to insert expertise ID and job post ID into JobPostSkillSet table
+                        var rowsAffected = await connection.ExecuteAsync("InsertUserJobPrefernce", skillParameters, commandType: CommandType.StoredProcedure);
+
+                        // Check if the insertion was successful
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception(ex.Message);
+                }
+                
             }
         }
     

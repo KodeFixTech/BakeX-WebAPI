@@ -43,11 +43,11 @@ namespace BakeX_WebAPI.Repositories
                         State = bakeMember.State,
                         District = bakeMember.District,
                         Place = bakeMember.Place,
-                        Pincode = bakeMember.Pincode,
+                        Pincode = bakeMember.PinCode,
                         BusinessName = bakeMember.BusinessName,
                         BusinessPhone= bakeMember.BusinessPhone,
                         BusinessAddress = bakeMember.BusinessAddress,
-                        FssaiNo = bakeMember.FssaiNo,
+                        FssaiNo = bakeMember.FssaiLicenseNo,
                         FssaiExpiryDate = bakeMember.FssaiExpiryDate,
                         ProfileCreatedDate = bakeMember.ProfileCreatedDate
 
