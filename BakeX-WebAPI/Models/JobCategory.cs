@@ -10,7 +10,7 @@
 
     public class EmploymentInformation
     {
-        public int EmploymentId { get; set; }
-        public string EmploymentType { get; set; }
+        public int JobTypeId { get; set; }
+        public string JobType { get; set; }
     }
 }

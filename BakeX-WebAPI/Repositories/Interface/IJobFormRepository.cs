@@ -11,5 +11,8 @@ namespace BakeX_WebAPI.Repositories.Interface
         public Task<IEnumerable<EmploymentInformation>> getEmploymentTypes();
 
         public Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes();
+
+
+        public Task<bool> CreateJobPost(JobPost jobPost);
     }
 }

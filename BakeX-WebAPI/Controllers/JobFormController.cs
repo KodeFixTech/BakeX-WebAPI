@@ -43,6 +43,9 @@ namespace BakeX_WebAPI.Controllers
         }
 
 
+
+
+
         [HttpGet]
         [Route("getEmploymentCategory")]
         public async Task<IActionResult> getEmploymentTypes()
@@ -58,6 +61,23 @@ namespace BakeX_WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching categories: {ex.Message}");
             }
 
+        }
+
+        [HttpPost]
+        [Route("CreateJobPost")]
+
+        public async Task<IActionResult> CreateJobPost(JobPost job)
+        {
+            try
+            {
+              var result=  await _jobFormRepository.CreateJobPost(job);
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while fetching categories: {ex.Message}");
+            }
         }
 
 

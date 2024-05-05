@@ -2,11 +2,17 @@
 {
     public class User
     {
-        public int User_Id { get; set; }
-        public required string email { get; set; }
+        public int? Id { get; set; }
+        public required string? MobileNumber { get; set; }
 
-        public required string googleId { get; set; }
-        public required string name { get; set; }
-        public required string profileImage { get; set; }
+        public required int? UserTypeId { get; set; }
+        public required string? IsMobileVerified { get; set; }
+
+        public string ? GoogleId { get; set; }
+
+        public String ? Password { get; set; }
+
+        public required int AuthId { get; set; }
+        public  DateTime? CreatedAt { get; set; }
     }
 }
