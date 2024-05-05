@@ -1,6 +1,7 @@
 ﻿using BakeX_WebAPI.DAL;
 using BakeX_WebAPI.Models;
 using BakeX_WebAPI.Repositories.Interface;
+using BakeX_WebAPI.Services;
 using Dapper;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.IdentityModel.Tokens;
@@ -16,10 +17,13 @@ namespace BakeX_WebAPI.Repositories
     {
         private SqlConnectionFactory _connection;
         private readonly IConfiguration _config;
-        public UserRepository(SqlConnectionFactory connection, IConfiguration config)
+
+        private readonly JwtService _jwtService;
+        public UserRepository(SqlConnectionFactory connection, IConfiguration config, JwtService jwtService)
         {
             _connection = connection;
             _config = config;
+            _jwtService = jwtService;
         }
 
         public async Task<bool> AddUserDetailsFromGoogleSignIn(User user)
@@ -132,19 +136,8 @@ namespace BakeX_WebAPI.Repositories
                         verifyPassword = BCrypt.Net.BCrypt.Verify(userData.Password, user.password);
                         if (verifyPassword)
                         {
-                            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-                            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                            var Sectoken = new JwtSecurityToken(_config["Jwt:Issuer"],
-                                      _config["Jwt:Issuer"],
-                                      null,
-                                      expires: DateTime.Now.AddMinutes(120),
-                                      signingCredentials: credentials);
-
-                            var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
-
-
-                            return token;
+                            String token = _jwtService.CreateToken();
+                            return token ;
                         }
                         else
                         {

@@ -41,6 +41,7 @@ builder.Services.AddScoped<IJobFormRepository, JobFormRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBakeryOwnerRepository, BakeryOwnerRepository>();
 builder.Services.AddSingleton<ImageDecoder>();
+builder.Services.AddSingleton<JwtService>();
 
 
 
