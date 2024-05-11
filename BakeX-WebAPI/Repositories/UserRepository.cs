@@ -8,11 +8,11 @@ using System.Data.SqlClient;
 
 namespace BakeX_WebAPI.Repositories
 {
-    public class UserRepository :IUserRepository
+    public class UserRepository : IUserRepository
     {
         private SqlConnectionFactory _connection;
-        public UserRepository(SqlConnectionFactory connection) 
-        { 
+        public UserRepository(SqlConnectionFactory connection)
+        {
             _connection = connection;
         }
 
@@ -37,12 +37,12 @@ namespace BakeX_WebAPI.Repositories
 
                         MobileNo = user.MobileNumber,
                         AuthTypeID = user.AuthId,
-                        GoogleId= user.GoogleId,
+                        GoogleId = user.GoogleId,
                     }, commandType: CommandType.StoredProcedure);
 
                     if (userExists == 0)
                     {
-                       if (user.AuthId==1)
+                        if (user.AuthId == 1)
                         {
 
                             await connection.ExecuteAsync("InsertUser", new
@@ -58,9 +58,10 @@ namespace BakeX_WebAPI.Repositories
                             return true;
 
                         }
-                       else if (user.AuthId == 2)
+                        else if (user.AuthId == 2)
                         {
-
+                            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                            user.Password = hashedPassword;
                             await connection.ExecuteAsync("InsertUser", new
                             {
                                 @MobileNumber = user.MobileNumber,
@@ -89,7 +90,7 @@ namespace BakeX_WebAPI.Repositories
             {
                 throw new Exception(ex.Message);
             }
-            
+
         }
 
 
@@ -171,7 +172,7 @@ namespace BakeX_WebAPI.Repositories
                 {
                     await connection.OpenAsync();
 
-                     districts = await connection.QueryAsync<District>("GetDistricts", commandType: CommandType.StoredProcedure);
+                    districts = await connection.QueryAsync<District>("GetDistricts", commandType: CommandType.StoredProcedure);
                     return districts;
                 }
             }
@@ -199,26 +200,26 @@ namespace BakeX_WebAPI.Repositories
 
                 try
                 {
-                   var result=  await connection.QueryFirstOrDefaultAsync<int>(
-                    "InsertProfile",
-                    new
-                    {
-                        FirstName = profile.FirstName,
-                        LastName = profile.LastName,
-                        MobileNo = profile.MobileNo,
-                        Age = profile.Age,
-                        Gender = profile.Gender,
-                        State = profile.State,
-                        District = profile.District,
-                        Place = profile.Place,
-                        ProfileCreatedDate = profile.ProfileCreatedDate,
-                        EducationId = profile.EducationId,
-                        ExperienceId = profile.ExperienceId,
-                        Pincode = profile.Pincode
+                    var result = await connection.QueryFirstOrDefaultAsync<int>(
+                     "InsertProfile",
+                     new
+                     {
+                         FirstName = profile.FirstName,
+                         LastName = profile.LastName,
+                         MobileNo = profile.MobileNo,
+                         Age = profile.Age,
+                         Gender = profile.Gender,
+                         State = profile.State,
+                         District = profile.District,
+                         Place = profile.Place,
+                         ProfileCreatedDate = profile.ProfileCreatedDate,
+                         EducationId = profile.EducationId,
+                         ExperienceId = profile.ExperienceId,
+                         Pincode = profile.Pincode
 
-                    },
-                    commandType: CommandType.StoredProcedure
-                );
+                     },
+                     commandType: CommandType.StoredProcedure
+                 );
 
 
                     foreach (int expertiseId in profile.ExpertiseIds)
@@ -256,10 +257,10 @@ namespace BakeX_WebAPI.Repositories
 
                     throw new Exception(ex.Message);
                 }
-                
+
             }
         }
-    
+
 
     }
 }
