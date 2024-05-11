@@ -93,9 +93,46 @@ namespace BakeX_WebAPI.Repositories
         }
 
 
-       
+        public async Task<bool> CheckUserExist(User user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    throw new ArgumentNullException();
+                }
 
-       
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    // Execute the CheckUserByEmail stored procedure to check if the user exists
+
+
+                    int userExists = await connection.ExecuteScalarAsync<int>("CheckUserByMobile", new
+                    {
+
+                        MobileNo = user.MobileNumber,
+                        AuthTypeID = user.AuthId,
+                        GoogleId = user.GoogleId,
+                    }, commandType: CommandType.StoredProcedure);
+
+                    if (userExists == 0)
+                    {
+                        return false;
+                    }
+                    else { return true; }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
 
 
         public async Task<User> GetUserFromEmail(String email)

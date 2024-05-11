@@ -51,6 +51,21 @@ namespace BakeX_WebAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("CheckUserExist")]
+        public async Task<IActionResult> IsUserExist(User user)
+        {
+            try
+            {
+                bool userExist = await _userRepository.CheckUserExist(user);
+                return Ok(userExist);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
 
     }
 }
