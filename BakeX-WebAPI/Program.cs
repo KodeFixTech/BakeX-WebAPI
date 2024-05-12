@@ -17,6 +17,7 @@ builder.Services.AddSingleton<SqlConnectionFactory>();
 builder.Services.AddScoped<IJobFormRepository,JobFormRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IBakeryOwnerRepository,BakeryOwnerRepository>();
+builder.Services.AddScoped<IJobSeekerRepository, JobSeekerRepository>();
 builder.Services.AddSingleton<ImageDecoder>();
 
 

@@ -57,8 +57,8 @@ namespace BakeX_WebAPI.Controllers
         {
             try
             {
-                bool userExist = await _userRepository.CheckUserExist(user);
-                return Ok(userExist);
+                User userDetails = await _userRepository.CheckUserExist(user);
+                return Ok(userDetails);
             }
             catch (Exception ex)
             {

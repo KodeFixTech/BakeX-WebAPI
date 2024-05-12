@@ -15,7 +15,7 @@ namespace BakeX_WebAPI.Repositories.Interface
         public Task SaveUserProfile(Profile profile);
 
 
-        public Task<bool> CheckUserExist(User user);
+        public Task<User> CheckUserExist(User user);
 
 
 
