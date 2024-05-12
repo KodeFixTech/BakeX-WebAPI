@@ -1,6 +1,8 @@
 using BakeX_WebAPI.DAL;
 using BakeX_WebAPI.Repositories;
 using BakeX_WebAPI.Repositories.Interface;
+using BakeX_WebAPI.Services;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<SqlConnectionFactory>();
 builder.Services.AddScoped<IJobFormRepository,JobFormRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IBakeryOwnerRepository,BakeryOwnerRepository>();
+builder.Services.AddScoped<IJobSeekerRepository, JobSeekerRepository>();
+builder.Services.AddSingleton<ImageDecoder>();
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -29,7 +36,14 @@ builder.Services.AddCors(options =>
 
 );
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 var app = builder.Build();
+
+
+app.MapGet("/api/greet", () => "Hello, World!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -10,10 +10,15 @@ namespace BakeX_WebAPI.Repositories.Interface
 
         public  Task<IEnumerable<District>> GetDistricts();
 
-        public  Task<IEnumerable<States>> GetStates();
+        public  Task<IEnumerable<District>> GetStates();
 
         public Task SaveUserProfile(Profile profile);
-        
+
+
+        public Task<User> CheckUserExist(User user);
+
+
+
 
     }
 }

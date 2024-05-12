@@ -1,8 +1,10 @@
 ﻿namespace BakeX_WebAPI.Models
 {
-    public class States
+    public class StateDistrict
     {
-        public int StateId { get; set; }
         public string StateName { get; set; }
+        public IEnumerable<District> Districts { get; set; }
     }
+
+   
 }
