@@ -16,6 +16,8 @@
         public string StateName { get; set; }
         public string DistrictName { get; set; }
         public string ExperienceType { get; set; }
+
+        public int AppliedStatus { get; set; }
     }
 
 }
