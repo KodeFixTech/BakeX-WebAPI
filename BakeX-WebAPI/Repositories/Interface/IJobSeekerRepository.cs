@@ -8,7 +8,9 @@ namespace BakeX_WebAPI.Repositories.Interface
 
         public Task<JobSeeker> GetJobSeekerProfile(string phoneno);
 
-        public Task<List<RecommendedJob>> GetRecommendedJobs(int profileId);
+        public Task<List<Job>> GetRecommendedJobs(int profileId);
+
+        public Task<List<Job>> GetJobs(int profileId);
 
         public Task ApplyForJob(JobApplication application);
     }

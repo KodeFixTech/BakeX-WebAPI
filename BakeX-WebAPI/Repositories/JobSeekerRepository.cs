@@ -44,7 +44,7 @@ namespace BakeX_WebAPI.Repositories
             }
         }
 
-        public async Task<List<RecommendedJob>> GetRecommendedJobs(int profileId)
+        public async Task<List<Job>> GetRecommendedJobs(int profileId)
         {
             try
             {
@@ -59,7 +59,33 @@ namespace BakeX_WebAPI.Repositories
                     var parameters = new DynamicParameters();
                     parameters.Add("@ProfileId", profileId);
 
-                    var result = await connection.QueryAsync<RecommendedJob>("GetRecommendedJob", parameters, commandType: CommandType.StoredProcedure);
+                    var result = await connection.QueryAsync<Job>("GetRecommendedJob", parameters, commandType: CommandType.StoredProcedure);
+                    return result.AsList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<Job>> GetJobs(int profileId)
+        {
+            try
+            {
+                if (profileId == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ProfileId", profileId);
+
+                    var result = await connection.QueryAsync<Job>("GetJob", parameters, commandType: CommandType.StoredProcedure);
                     return result.AsList();
                 }
 

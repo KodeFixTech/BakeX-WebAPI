@@ -66,6 +66,28 @@ namespace BakeX_WebAPI.Controllers
         }
 
 
+        [HttpGet]
+        [Route("getJobs/{profileId}")]
+        public async Task<IActionResult> GetJobs(int profileId)
+        {
+            try
+            {
+                if (profileId == null)
+                {
+                    return BadRequest("ProfileId no cannot be null");
+                }
+
+                var result = await _jobSeekerRepository.GetJobs(profileId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
         [HttpPost]
         [Route("ApplyJobs")]
         public async Task<IActionResult> ApplyForJob(JobApplication application)
