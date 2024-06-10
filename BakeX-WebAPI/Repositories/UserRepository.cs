@@ -94,6 +94,67 @@ namespace BakeX_WebAPI.Repositories
         }
 
 
+        public async Task<User> CheckUserExist(User user)
+        {
+            try
+            {
+                if (user == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                User userExists = null; // Initialize userExists outside of the conditional blocks
+
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    if (user.AuthId == 2)
+                    {
+                        string query = @"
+                         SELECT uc.password 
+                         FROM UserCredentials uc 
+                         INNER JOIN Users us ON uc.UserId = us.Id
+                         WHERE us.MobileNumber = @MobileNumber";
+
+                        var password = await connection.QueryFirstOrDefaultAsync<string>(query, new { MobileNumber = user.MobileNumber });
+                        if(password != null)
+                        {
+                            var comparePassword = BCrypt.Net.BCrypt.Verify(user.Password, password);
+                            if (comparePassword == true)
+                            {
+                                var parameters = new
+                                {
+                                    MobileNo = user.MobileNumber,
+                                    AuthTypeId = user.AuthId,
+                                    GoogleId = user.GoogleId,
+                                };
+
+                                userExists = await connection.QueryFirstOrDefaultAsync<User>("CheckUserByMobile", parameters, commandType: CommandType.StoredProcedure);
+                            }
+                        }
+                        
+                    }
+                    else
+                    {
+                        var parameters = new
+                        {
+                            MobileNo = user.MobileNumber,
+                            AuthTypeId = user.AuthId,
+                            GoogleId = user.GoogleId,
+                        };
+
+                        userExists = await connection.QueryFirstOrDefaultAsync<User>("CheckUserByMobile", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                }
+
+                return userExists; // Return userExists after the try-catch block
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
 
 
