@@ -2,12 +2,14 @@
 using BakeX_WebAPI.Models;
 using BakeX_WebAPI.Repositories.Interface;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using System.Data.SqlClient;
 
 namespace BakeX_WebAPI.Controllers
 {
+   // [Authorize]
     [ApiController]
     [Route("api/v1/controller")]
     public class JobFormController : Controller

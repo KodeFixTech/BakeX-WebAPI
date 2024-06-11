@@ -1,6 +1,7 @@
 ﻿using BakeX_WebAPI.Models;
 using BakeX_WebAPI.Repositories;
 using BakeX_WebAPI.Repositories.Interface;
+using BakeX_WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BakeX_WebAPI.Controllers
@@ -11,11 +12,14 @@ namespace BakeX_WebAPI.Controllers
     {
         private IUserRepository _userRepository;
         private IBakeryOwnerRepository _ownerRepository;
+        private readonly AuthService _authService;
 
-        public AuthenticationController(IUserRepository userRepository, IBakeryOwnerRepository ownerRepository)
+        public AuthenticationController(IUserRepository userRepository, IBakeryOwnerRepository ownerRepository, AuthService authService)
         {
             _userRepository = userRepository;
             _ownerRepository = ownerRepository;
+            _authService = authService;
+
         }
 
         [HttpPost]
@@ -58,7 +62,12 @@ namespace BakeX_WebAPI.Controllers
             try
             {
                 User userDetails = await _userRepository.CheckUserExist(user);
-                return Ok(userDetails);
+                if (userDetails != null)
+                {
+                    var token = _authService.GenerateJwtToken(userDetails);
+                    return Ok(new { token });
+                }
+                return Unauthorized();
             }
             catch (Exception ex)
             {
