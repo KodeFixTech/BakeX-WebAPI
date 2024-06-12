@@ -75,6 +75,24 @@ namespace BakeX_WebAPI.Repositories
                             return true;
 
                         }
+                        else if (user.AuthId == 3)
+                        {
+
+                            await connection.ExecuteAsync("InsertUser", new
+                            {
+                                @MobileNumber = user.MobileNumber,
+                                @AuthTypeId = user.AuthId,
+                                @UserTypeId = user.UserTypeId,
+                                @IsMobileVerified = user.IsMobileVerified,
+                                @CreatedAt = DateTime.Now,
+                                @GoogleId = user.GoogleId,
+                            }, commandType: CommandType.StoredProcedure);
+
+                            return true;
+
+                        }
+
+
 
                         return true;
 
@@ -135,6 +153,18 @@ namespace BakeX_WebAPI.Repositories
                         }
                         
                     }
+                    else if (user.AuthId==3)
+                    {
+                        var parameters = new
+                        {
+                            MobileNo = user.MobileNumber,
+                            AuthTypeId = user.AuthId,
+                            GoogleId = user.GoogleId,
+                        };
+
+                        userExists = await connection.QueryFirstOrDefaultAsync<User>("CheckUserByMobile", parameters, commandType: CommandType.StoredProcedure);
+                    }
+                
                     else
                     {
                         var parameters = new
