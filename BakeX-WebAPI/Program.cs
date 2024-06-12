@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<IBakeryOwnerRepository,BakeryOwnerRepository>();
 builder.Services.AddScoped<IJobSeekerRepository, JobSeekerRepository>();
 builder.Services.AddSingleton<ImageDecoder>();
 builder.Services.AddSingleton<AuthService>();
+builder.Services.AddMemoryCache();
 
 
 
