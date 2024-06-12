@@ -64,6 +64,10 @@ namespace BakeX_WebAPI.Controllers
                 User userDetails = await _userRepository.CheckUserExist(user);
                 if (userDetails != null)
                 {
+                    if(userDetails.MobileNumber==null)
+                    {
+                        return Ok(userDetails);
+                    }
                     var token = _authService.GenerateJwtToken(userDetails);
                     return Ok(new { token });
                 }
