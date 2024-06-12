@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace BakeX_WebAPI.Repositories
 {
@@ -13,10 +14,18 @@ namespace BakeX_WebAPI.Repositories
     {
 
         private readonly SqlConnectionFactory _connection;
+        //cache
+        private readonly IMemoryCache _memoryCache;
+        private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(3);
 
-        public JobFormRepository(SqlConnectionFactory connection)
+        /*public JobFormRepository(SqlConnectionFactory connection)
         {
             _connection = connection;
+        }*/
+        public JobFormRepository(SqlConnectionFactory connection, IMemoryCache memoryCache)
+        {
+            _connection = connection;
+            _memoryCache = memoryCache;
         }
 
         public async Task<IEnumerable<JobCategory>> GetJobCategory()
@@ -41,13 +50,38 @@ namespace BakeX_WebAPI.Repositories
         }
 
 
-        public  async Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes()
+        /*public  async Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes()
         {
             using (SqlConnection connection = _connection.CreateConnection())
             {
                 var categories = await connection.QueryAsync<ExpertiseInformation>("select * from ExpertiseInformation");
                 return categories;
             }
+        }*/
+        public async Task<IEnumerable<ExpertiseInformation>> getExpertiseTypes()
+        {
+            // Cache key for expertise information
+            var cacheKey = "expertiseTypes";
+
+            // Try to get expertise information from cache
+            if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<ExpertiseInformation> expertiseTypes))
+            {
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    expertiseTypes = await connection.QueryAsync<ExpertiseInformation>("select * from ExpertiseInformation");
+
+                    // Set cache options
+                    var cacheOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = _cacheDuration
+                    };
+
+                    // Cache the data
+                    _memoryCache.Set(cacheKey, expertiseTypes, cacheOptions);
+                }
+            }
+
+            return expertiseTypes;
         }
 
 
