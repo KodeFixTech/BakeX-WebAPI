@@ -113,6 +113,7 @@ namespace BakeX_WebAPI.Repositories
                     if(result.ProfileImage!=null )
                     {
                         result.ProfileImageBase64 = Convert.ToBase64String(result.ProfileImage);
+                        result.ProfileImage = null;
                     }
                     return result;
                 }

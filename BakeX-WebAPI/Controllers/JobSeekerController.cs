@@ -66,6 +66,8 @@ namespace BakeX_WebAPI.Controllers
         }
 
 
+
+
         [HttpGet]
         [Route("getJobs/{profileId}")]
         public async Task<IActionResult> GetJobs(int profileId)
@@ -100,6 +102,21 @@ namespace BakeX_WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("getDistinctBusinessDetails")]
+        public async Task<IActionResult> GetDistinctBusinessDetails()
+        {
+            try
+            {
+                var result = await _jobSeekerRepository.GetDistinctBusinessDetails();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

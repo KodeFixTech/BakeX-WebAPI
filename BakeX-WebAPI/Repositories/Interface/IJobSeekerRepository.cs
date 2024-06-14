@@ -13,5 +13,7 @@ namespace BakeX_WebAPI.Repositories.Interface
         public Task<List<Job>> GetJobs(int profileId);
 
         public Task ApplyForJob(JobApplication application);
+
+        public Task<List<Business>> GetDistinctBusinessDetails();
     }
 }

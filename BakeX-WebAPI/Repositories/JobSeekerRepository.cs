@@ -70,6 +70,8 @@ namespace BakeX_WebAPI.Repositories
             }
         }
 
+
+
         public async Task<List<Job>> GetJobs(int profileId)
         {
             try
@@ -113,6 +115,34 @@ namespace BakeX_WebAPI.Repositories
                 throw new Exception("Error applying for job.", ex); // Rethrow the exception
             }
 
+        }
+
+        public async Task<List<Business>> GetDistinctBusinessDetails()
+        {
+            try
+            {
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    var result = await connection.QueryAsync<Business>("sp_GetDistinctBusinessDetails", commandType: CommandType.StoredProcedure);
+
+                   foreach (var business in result)
+                    {
+                        if (business.ProfileImage != null && business.ProfileImage.Length > 0)
+                        {
+                            business.ProfileImageBase64 = Convert.ToBase64String(business.ProfileImage);
+                            business.ProfileImage = null;
+                            // no need of sending multiple duplicated blob data, to reduce payload to frontend i have made it null, ig its a genius move
+                        }
+                    }
+                    return result.AsList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving business details", ex);
+            }
         }
     }
 }
