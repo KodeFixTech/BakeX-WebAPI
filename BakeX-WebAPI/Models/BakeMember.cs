@@ -23,9 +23,13 @@
         public string BusinessPhone { get; set; }
         public DateTime? FssaiExpiryDate { get; set; }
         public DateTime? ProfileCreatedDate { get; set; }
-      public string? ProfileImage { get; set; }
+
+
+        public byte[]? ProfileImage { get; set; }
 
         public string? IsBakeKeralaMember { get; set; }
+
+        public string? ProfileImageBase64 { get; set; }
     }
 
 }

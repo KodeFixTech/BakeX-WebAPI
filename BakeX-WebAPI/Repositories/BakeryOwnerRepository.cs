@@ -109,6 +109,11 @@ namespace BakeX_WebAPI.Repositories
                     parameters.Add("@Phone", phoneno);
 
                     var result = await connection.QueryFirstOrDefaultAsync<BakeMember>("GetBakeMemberByPhone", parameters, commandType: CommandType.StoredProcedure);
+
+                    if(result.ProfileImage!=null )
+                    {
+                        result.ProfileImageBase64 = Convert.ToBase64String(result.ProfileImage);
+                    }
                     return result;
                 }
 
@@ -150,6 +155,34 @@ namespace BakeX_WebAPI.Repositories
 
 
 
+        }
+
+        public async Task<IEnumerable<JobPost>> GetJobPostByOwner(int Id)
+        {
+            try
+            {
+                if (Id == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Id", Id);
+
+                    var result = await connection.QueryAsync<JobPost>("GetJobPostByOwner", parameters, commandType: CommandType.StoredProcedure);
+
+                  
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 

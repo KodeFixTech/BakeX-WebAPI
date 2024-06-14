@@ -1,6 +1,7 @@
 ﻿using BakeX_WebAPI.DAL;
 using BakeX_WebAPI.Models;
 using BakeX_WebAPI.Repositories.Interface;
+using BakeX_WebAPI.Services;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,15 @@ namespace BakeX_WebAPI.Controllers
         private readonly SqlConnectionFactory _connectionFactory;
         private readonly IJobFormRepository   _jobFormRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ImageDecoder _imageDecoder;
 
-        public JobFormController(IJobFormRepository jobFormRepository, IUserRepository userRepository)
+        public JobFormController(IJobFormRepository jobFormRepository, IUserRepository userRepository, ImageDecoder decoder)
         {
-         
+
             _jobFormRepository = jobFormRepository;
             _userRepository = userRepository;
+            _imageDecoder = decoder;
+
         }
 
         [HttpGet]

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
+using BakeX_WebAPI.Services;
 
 namespace BakeX_WebAPI.Repositories
 {
@@ -17,15 +18,17 @@ namespace BakeX_WebAPI.Repositories
         //cache
         private readonly IMemoryCache _memoryCache;
         private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(3);
+        private readonly ImageDecoder _imageDecoder;
 
         /*public JobFormRepository(SqlConnectionFactory connection)
         {
             _connection = connection;
         }*/
-        public JobFormRepository(SqlConnectionFactory connection, IMemoryCache memoryCache)
+        public JobFormRepository(SqlConnectionFactory connection, IMemoryCache memoryCache, ImageDecoder imageDecoder)
         {
             _connection = connection;
             _memoryCache = memoryCache;
+            _imageDecoder = imageDecoder;
         }
 
         public async Task<IEnumerable<JobCategory>> GetJobCategory()
@@ -116,7 +119,8 @@ namespace BakeX_WebAPI.Repositories
                         // Check if ProfileImage is provided and add it to parameters
                         if (jobPost.ProfileImage != null)
                         {
-                            parameters.Add("@ProfileImage", jobPost.ProfileImage);
+                            var base64Image = _imageDecoder.DecodeBase64Image(jobPost.ProfileImage);
+                            parameters.Add("@ProfileImage", base64Image);
                         }
 
                         // Execute the stored procedure to insert job post details

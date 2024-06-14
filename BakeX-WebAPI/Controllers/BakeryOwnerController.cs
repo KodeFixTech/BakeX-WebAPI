@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BakeX_WebAPI.Controllers
 {
 
-    
+
     [ApiController]
     [Route("api/v1/controller")]
     public class BakeryOwnerController : Controller
@@ -14,7 +14,7 @@ namespace BakeX_WebAPI.Controllers
 
         private readonly SqlConnectionFactory _connectionFactory;
         private readonly IJobFormRepository _jobFormRepository;
-   
+
         private readonly IBakeryOwnerRepository _ownerRepository;
 
         public BakeryOwnerController(SqlConnectionFactory connectionFactory, IBakeryOwnerRepository ownerRepository)
@@ -28,7 +28,7 @@ namespace BakeX_WebAPI.Controllers
         [Route("getBakeOwner")]
         public async Task<IActionResult> getBakeOwnerDetails(string phoneno)
         {
-            var result =  await _ownerRepository.getBakeMemberDetails(phoneno);
+            var result = await _ownerRepository.getBakeMemberDetails(phoneno);
             return Ok(result);
         }
 
@@ -79,5 +79,27 @@ namespace BakeX_WebAPI.Controllers
 
 
         }
+
+        [HttpGet]
+        [Route("getJobPostByOwner/{Id}")]
+        public async Task<IActionResult> GetJobPostByOwner(int Id)
+        {
+            try
+            {
+                if (Id== null)
+                {
+                    return BadRequest("Phone no cannot be null");
+                }
+
+                var result = await _ownerRepository.GetJobPostByOwner(Id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+
     }
 }

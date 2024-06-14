@@ -15,8 +15,10 @@
         public int DistrictId { get; set; }
         public char? IsActive { get; set; }
 
-        public byte[]? ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
         public List<int> ExpertiseIds { get; set; }
+
+        public int? ExpertiseId { get; set; }
     }
 }

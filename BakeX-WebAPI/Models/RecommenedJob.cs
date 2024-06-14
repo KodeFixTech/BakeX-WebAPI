@@ -11,7 +11,7 @@
         public DateTime CreatedDate { get; set; }
         public string BusinessAddress { get; set; }
         
-        public string ProfileImage { get; set; }
+        public Byte[] ProfileImage { get; set; }
         public string BusinessName { get; set; }
         public string StateName { get; set; }
         public string DistrictName { get; set; }
