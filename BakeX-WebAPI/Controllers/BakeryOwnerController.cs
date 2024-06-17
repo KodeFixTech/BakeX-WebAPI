@@ -99,7 +99,28 @@ namespace BakeX_WebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
+
+        [HttpGet]
+        [Route("getApplicantsByOwner/{Id}")]
+        public async Task<IActionResult> GetApplicantsByOwner(int Id)
+        {
+            try
+            {
+                if (Id == null)
+                {
+                    return BadRequest("Phone no cannot be null");
+                }
+
+                var result = await _ownerRepository.GetApplicantsByJobId(Id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
     }
 }

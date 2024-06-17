@@ -13,5 +13,7 @@ namespace BakeX_WebAPI.Repositories.Interface
         public Task<bool> CheckBakeUser(String phoneno);
 
         public Task<IEnumerable<JobPost>> GetJobPostByOwner(int Id);
+
+        public Task<IEnumerable<JobSeeker>> GetApplicantsByJobId(int Id);
     }
 }

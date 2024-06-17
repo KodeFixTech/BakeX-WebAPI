@@ -31,12 +31,12 @@ namespace BakeX_WebAPI.Repositories
                     //  var decodedImage = _imageDecoder.DecodeBase64Image(nonBakeMember.OtherInformation.LogoUrl);
 
                     bakeMember.ProfileCreatedDate = DateTime.Now;
-                    
+
 
                     var parameters = new
                     {
-                        FirstName= bakeMember.FirstName,   
-                        LastName= bakeMember.LastName,
+                        FirstName = bakeMember.FirstName,
+                        LastName = bakeMember.LastName,
                         Age = bakeMember.Age,
                         Gender = bakeMember.Gender,
                         PhoneNo = bakeMember.PhoneNo,
@@ -45,7 +45,7 @@ namespace BakeX_WebAPI.Repositories
                         Place = bakeMember.Place,
                         Pincode = bakeMember.PinCode,
                         BusinessName = bakeMember.BusinessName,
-                        BusinessPhone= bakeMember.BusinessPhone,
+                        BusinessPhone = bakeMember.BusinessPhone,
                         BusinessAddress = bakeMember.BusinessAddress,
                         FssaiNo = bakeMember.FssaiLicenseNo,
                         FssaiExpiryDate = bakeMember.FssaiExpiryDate,
@@ -75,18 +75,18 @@ namespace BakeX_WebAPI.Repositories
             {
                 using (SqlConnection connection = _connection.CreateConnection())
                 {
-                   await connection.OpenAsync();
+                    await connection.OpenAsync();
 
 
                     var parameters = new DynamicParameters();
                     parameters.Add("@PhoneNo", phoneNo);
 
-                    var result =  await connection.QueryFirstOrDefaultAsync<BakeMember>("sp_GetNonBakeryOwnerProfile", parameters, commandType: CommandType.StoredProcedure);
-                    return result; 
+                    var result = await connection.QueryFirstOrDefaultAsync<BakeMember>("sp_GetNonBakeryOwnerProfile", parameters, commandType: CommandType.StoredProcedure);
+                    return result;
                 }
             }
 
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -110,7 +110,7 @@ namespace BakeX_WebAPI.Repositories
 
                     var result = await connection.QueryFirstOrDefaultAsync<BakeMember>("GetBakeMemberByPhone", parameters, commandType: CommandType.StoredProcedure);
 
-                    if(result.ProfileImage!=null )
+                    if (result.ProfileImage != null)
                     {
                         result.ProfileImageBase64 = Convert.ToBase64String(result.ProfileImage);
                         result.ProfileImage = null;
@@ -175,7 +175,37 @@ namespace BakeX_WebAPI.Repositories
 
                     var result = await connection.QueryAsync<JobPost>("GetJobPostByOwner", parameters, commandType: CommandType.StoredProcedure);
 
-                  
+
+                    return result;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+
+        public async Task<IEnumerable<JobSeeker>> GetApplicantsByJobId(int Id)
+
+        {
+            try
+            {
+                if (Id == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                using (SqlConnection connection = _connection.CreateConnection())
+                {
+                    await connection.OpenAsync();
+
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@JobId", Id);
+
+                    var result = await connection.QueryAsync<JobSeeker>("SP_GetApplicantsByJobId", parameters, commandType: CommandType.StoredProcedure);
+
+
                     return result;
                 }
 
@@ -189,4 +219,7 @@ namespace BakeX_WebAPI.Repositories
 
 
     }
+
+
+
 }
